@@ -45,7 +45,7 @@ i processi figli "monitorano" continuamente countdown:
 #define N 10
 
 sem_t * mutex;
-sem_t * sem;
+sem_t * sem;	//semaforo per la serializzazione degli eventi: padre pone countdown = 100000 -> figli cominciano a decrementare
 
 int * countdown;
 int * process_counter;
@@ -91,7 +91,7 @@ int main(int argc, char * argv[]) {
 	s = sem_init(mutex,
 					1, // 1 => il semaforo è condiviso tra processi,
 					   // 0 => il semaforo è condiviso tra threads del processo
-					1 // valore iniziale del semaforo (se mettiamo 0 che succede?)
+					1 // valore iniziale del semaforo
 				  );
 
 	CHECK_ERR(s,"sem_init")
@@ -105,7 +105,7 @@ int main(int argc, char * argv[]) {
 	s = sem_init(sem,
 					1, // 1 => il semaforo è condiviso tra processi,
 					   // 0 => il semaforo è condiviso tra threads del processo
-					0 // valore iniziale del semaforo (se mettiamo 0 che succede?)
+					0 // valore iniziale del semaforo
 				  );
 
 	CHECK_ERR(s,"sem_init")
@@ -182,6 +182,9 @@ int main(int argc, char * argv[]) {
 	}
 
 	s = sem_destroy(mutex);
+	CHECK_ERR(s,"sem_destroy")
+
+	s = sem_destroy(sem);
 	CHECK_ERR(s,"sem_destroy")
 
 	printf("bye\n");
